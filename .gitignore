@@ -1,0 +1,5 @@
+# exclude everything
+local/*
+
+# exception to the rule
+!somefolder/.gitignore
