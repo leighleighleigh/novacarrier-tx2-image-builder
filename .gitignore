@@ -2,4 +2,4 @@
 local/*
 
 # exception to the rule
-!somefolder/.gitignore
+!local/.gitignore
