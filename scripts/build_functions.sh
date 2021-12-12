@@ -3,7 +3,7 @@ function apply_nova_dts()
 {
     # Copies the files in dts to their proper location
     NOVA_DTS="${SCRIPT_DIR}/dts/"
-    KERNSRCDIR="${INSTALLDIR}/Linux_for_Tegra/"
+    TARGETPREFIX="${INSTALLDIR}/Linux_for_Tegra/"
     
     # For each non *txt in the NOVA_DTS folder, we read the filepath from it's accomanying .txt file, and copy it there.
     # Each <filename>.txt must be a single line, with it's target path.
@@ -17,7 +17,7 @@ function apply_nova_dts()
         # Read the first line of the txt file
         targetDir=$(head -n 1 $txtFriend)
         # Copy the file
-        echo "Copying $f to $targetDir"
+        echo "Copying $f to ${TARGETPREFIX}${targetDir}"
         cp $f $targetDir
     done
 }
