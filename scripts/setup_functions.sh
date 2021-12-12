@@ -93,6 +93,16 @@ function apply_binaries()
     stop_spinner $?
 }
 
+# Use script to make default user
+function make_default_user()
+{
+    # Hop into scripts folder
+    toolpath="${INSTALLDIR}Linux_for_Tegra/tools/l4t_create_default_user.sh"
+    start_spinner "Using ${toolpath}"
+    sudo ${toolpath} -u nvidia -p nvidia --accept-license
+    stop_spinner $?
+}
+
 # Extract the kernel sources
 function setup_kernel_sources()
 {
@@ -128,7 +138,7 @@ function setup_kernel_sources()
 
     export CROSS_COMPILE=$INSTALLDIR/l4t-gcc/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
     export LOCALVERSION=-tegra
-    export TEGRA_KERNEL_OUT=${INSTALLDIR}/Linux_for_Tegra/kernel-build
+    export TEGRA_KERNEL_OUT=${INSTALLDIR}Linux_for_Tegra/kernel-build
     ### Write these to our env file
     echo "export CROSS_COMPILE=${CROSS_COMPILE}" >> ${ENVFILE}
     echo "export LOCALVERSION=${LOCALVERSION}" >> ${ENVFILE}
@@ -140,7 +150,7 @@ function setup_kernel_sources()
     echo "Applying patch to fix failure to build."
     echo "See: https://forums.developer.nvidia.com/t/failed-to-make-l4t-kernel-dts/116399/7"
 
-    FILETOPATCH=${INSTALLDIR}/Linux_for_Tegra/source/public/kernel/kernel-4.9/scripts/Kbuild.include
+    FILETOPATCH=${INSTALLDIR}Linux_for_Tegra/source/public/kernel/kernel-4.9/scripts/Kbuild.include
     PATCHFILE=${SCRIPT_DIR}/patches/Kbuild.include.patch
     patch -b -u ${FILETOPATCH} -i ${PATCHFILE} | installlog
     stop_spinner $?
@@ -148,3 +158,4 @@ function setup_kernel_sources()
     ### Write the relevant environment variables to file,
     # so we can source them later
 }
+

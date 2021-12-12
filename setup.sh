@@ -5,10 +5,10 @@ SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # Setup the environment flags
 INSTALLDIR=${SCRIPT_DIR}/local/
 
-BSPFILEDONE="${INSTALLDIR}/.extracted_bsp"
-ROOTFSFILEDONE="${INSTALLDIR}/.extracted_rootfs"
-LOGFILE=${INSTALLDIR}/install.log
-ENVFILE=${INSTALLDIR}/install.env
+BSPFILEDONE="${INSTALLDIR}extracted_bsp.done"
+ROOTFSFILEDONE="${INSTALLDIR}extracted_rootfs.done"
+LOGFILE="${INSTALLDIR}install.log"
+ENVFILE="${INSTALLDIR}install.env"
 
 # Load the external utility scripts
 source ${SCRIPT_DIR}/scripts/textutils.sh
@@ -68,6 +68,19 @@ get_archives
 extract_archives
 apply_binaries
 
+# Create default user
+prompt "Would you like create a default user for headless SSH login? (username: nvidia, password: nvidia) ${BOLD}[Y/n]${END} "
+case "$REPLY" in
+    "")
+        make_default_user
+        ;;
+    [yY][eE][sS]|[yY]) 
+        make_default_user
+        ;;
+    *)
+        ;;
+esac
+
 # Prompt for the install thing
 prompt "Would you like setup the kernel source files, and install the compilation toolchain? ${BOLD}[Y/n]${END} "
 case "$REPLY" in
@@ -83,5 +96,5 @@ esac
 
 setup_kernel_sources
 
-echo "${BOLD}Kernel source ready for compilation!${END}"
-echo "You may now run ${BUILD}build.sh${END}"
+printf "${BOLD}Kernel source ready for compilation!${END}\n"
+printf "You may now run ${BUILD}build.sh${END}\n"

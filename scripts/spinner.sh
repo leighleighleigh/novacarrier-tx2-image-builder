@@ -68,7 +68,7 @@ function start_spinner {
 function stop_spinner {
     # $1 : command exit status
     # Add sleep so it will always show
-    sleep 0.5
+    sleep 1
     _spinner "stop" $1 $_sp_pid
     unset _sp_pid
 }
