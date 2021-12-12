@@ -4,5 +4,6 @@ local/*
 # exception to the rule
 !local/.gitignore
 
-# Hide all log files
+# Hide all .log files, all .env files
 **.log
+**.env
