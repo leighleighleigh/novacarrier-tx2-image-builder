@@ -155,7 +155,7 @@
 			gpio = <&tegra_main_gpio TEGRA_MAIN_GPIO(L, 4) 0>;
 			gpio-open-drain;
 			enable-active-high;
-			regulator-always-on
+			regulator-always-on;
 		};
 
 		vdd_usb1_5v: regulator@5 {
@@ -167,7 +167,7 @@
 			gpio = <&tegra_main_gpio TEGRA_MAIN_GPIO(L, 5) 0>;
 			gpio-open-drain;
 			enable-active-high;
-			regulator-always-on
+			regulator-always-on;
 		};
 
 		en_vdd_ts_1v8: regulator@6 {
@@ -290,7 +290,7 @@
 			regulator-max-microvolt = <5000000>;
 			gpio = <&tegra_main_gpio TEGRA_MAIN_GPIO(X, 6) 0>;
 			// gpio-open-drain;
-			regulator-always-on
+			regulator-always-on;
 			enable-active-high;
 		};
 
