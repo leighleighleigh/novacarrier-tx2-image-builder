@@ -3,3 +3,6 @@ local/*
 
 # exception to the rule
 !local/.gitignore
+
+# Hide all log files
+**.log

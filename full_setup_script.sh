@@ -1,59 +1,34 @@
 #!/bin/bash
 
-INFO='\033[0;32;1m'
-END='\033[0m'
-BOLD='\033[1m'
-TITLE='\033[0;36;1m'
-
-TXTWHITE='\033[97m'
-BGORANGE='\033[48;5;208m'
-BGRED='\033[48;5;9m'
-NOVA=$BGORANGE$TXTWHITE$BOLD
-ERROR=$BGRED$TXTWHITE$BOLD
-
-function title () {
-    echo 
-    # txtlen + 1 for centering
-    txtlen=$(expr ${#1} + 1)
-    printf "${NOVA}"
-    printf -- "-%.0s" $(seq 0 $txtlen)
-    printf "${END}\n"
-
-    printf "${NOVA}"
-    printf " ${1^^} "
-    printf "${END}\n"
-
-    printf "${NOVA}"
-    printf -- "-%.0s" $(seq 0 $txtlen)
-    printf "${END}\n"
-    echo
-}
-
-
-# Response is in $REPLY. Formatting is cleared.
-function prompt () {
-    printf "${NOVA}PROMPT:${END} "
-    printf "$1${END}"
-    read -r
-}
-
-# Custom nova text
-title "Jetson Carrier Kernel: Build Environment Setup Tool"
-
-# Check for root
-if [[ "$(whoami)" != root ]]; then
-  printf "${ERROR}Please run this script as root!${END}\n"
-  printf "${ERROR}This is neccesary to use QEMU${END}\n"
-  exit 1
-fi
-
 # Get location of this script. This is different to the current working directory, which could be anywhere!
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-# Define the install dir
+# Setup the environment flags
 INSTALLDIR=${SCRIPT_DIR}/local/
-
 BSPFILEDONE="${INSTALLDIR}/.extracted_bsp"
 ROOTFSFILEDONE="${INSTALLDIR}/.extracted_rootfs"
+LOGFILE=${SCRIPT_DIR}/install.log
+# Clear the logfile
+echo "" > ${LOGFILE}
+
+# Logging command.Adds timestamp, Appends to logfile and hides output.
+shopt -s expand_aliases
+alias installlog="tee -a ${LOGFILE} >/dev/null"
+echo "HI!" | installlog
+
+# Load the external utility scripts
+source ${SCRIPT_DIR}/utils/textutils.sh
+source ${SCRIPT_DIR}/utils/spinner.sh
+source ${SCRIPT_DIR}/utils/cmdutils.sh
+
+# Custom nova text
+title "Novacarrier: Build Environment Setup Tool"
+
+# Check for sudo
+if [ $EUID != 0 ]; then
+    printf "${ERROR}This script requires sudo!${END}\n"
+    printf "${ERROR}This is neccesary to use QEMU.${END}\n"
+    exit 1
+fi
 
 # Prompt for the install thing
 echo ""
@@ -71,99 +46,13 @@ case "$REPLY" in
         ;;
 esac
 
-function _spinner() {
-    # $1 start/stop
-    #
-    # on start: $2 display message
-    # on stop : $2 process exit status
-    #           $3 spinner function pid (supplied from stop_spinner)
-
-    local on_success="DONE"
-    local on_fail="FAIL"
-    local white="\e[1;37m"
-    local green="\e[1;32m"
-    local red="\e[1;31m"
-    local nc="\e[0m"
-
-    case $1 in
-        start)
-            # calculate the column where spinner and status msg will be displayed
-            let column=$(tput cols)-${#2}-8
-            # display message and position the cursor in $column column
-            echo -ne ${2}
-            printf "%${column}s"
-
-            # start spinner
-            i=1
-            sp='\|/-'
-            delay=${SPINNER_DELAY:-0.15}
-
-            while :
-            do
-                printf "\b${sp:i++%${#sp}:1}"
-                sleep $delay
-            done
-            ;;
-        stop)
-            if [[ -z ${3} ]]; then
-                echo "spinner is not running.."
-                exit 1
-            fi
-
-            kill $3 > /dev/null 2>&1
-
-            # inform the user uppon success or failure
-            echo -en "\b["
-            if [[ $2 -eq 0 ]]; then
-                echo -en "${green}${on_success}${nc}"
-            else
-                echo -en "${red}${on_fail}${nc}"
-            fi
-            echo -e "]"
-            ;;
-        *)
-            echo "invalid argument, try {start/stop}"
-            exit 1
-            ;;
-    esac
-}
-
-function start_spinner {
-    # $1 : msg to display
-    _spinner "start" "${1}" &
-    # set global spinner pid
-    _sp_pid=$!
-    disown
-}
-
-function stop_spinner {
-    # $1 : command exit status
-    # Add sleep so it will always show
-    sleep 0.5
-    _spinner "stop" $1 $_sp_pid
-    unset _sp_pid
-}
-
-function nice_wget {
-    # Numper of args is $#
-    if [ $# -eq 2 ]
-    then
-        # URL is $1
-        # Output file is $2
-        wget -q --show-progress -np -N $1 -O $2
-    else
-        echo "nice_get invalid arguments, got: $*"
-        exit 1
-    fi
-}
-
 ### DIRECTORY SETUP
 start_spinner "mkdir ${INSTALLDIR} && cd ${INSTALLDIR}"
 mkdir -p $INSTALLDIR && cd $INSTALLDIR
 stop_spinner $?
 
 # Start log
-echo "START NOVACARRIER KERNEL DEV SETUP LOG" > ${INSTALLDIR}/.install_log
+echo "START NOVACARRIER KERNEL DEV SETUP LOG" > ${LOGFILE}
 
 ### DOWNLOAD ARCHIVES
 BSPARCHIVE="jetson_linux_r32.6.1_aarch64.tbz2"
@@ -229,17 +118,21 @@ fi
 cd ..
 stop_spinner $?
 
+
 ### APPLY THE KERNEL BINARIES AND MODULES
 start_spinner "Running ./apply_binaries.sh..."
 # Run this script, which will basically install
 # a bunch of applications into the rootfs
-echo "Output being redirected to ${INSTALLDIR}/.install_log"
-sudo ./apply_binaries.sh | tee -a ${INSTALLDIR}/.install_log
+echo "Output being redirected to ${LOGFILE}"
+sudo ./apply_binaries.sh | installlog
 stop_spinner $?
+
 
 # Prompt for the install thing
 prompt "Would you like setup the kernel source files, and install the compilation toolchain? ${BOLD}[Y/n]${END} "
 case "$REPLY" in
+    "")
+        ;;
     [yY][eE][sS]|[yY]) 
         ;;
     *)
@@ -264,14 +157,14 @@ stop_spinner $?
 
 ### INSTALL THE COMPILER TOOLCHAIN
 start_spinner "Installing L4T compiler toolchain..."
-echo "Output being redirected to ${INSTALLDIR}/.install_log"
+echo "Output being redirected to ${LOGFILE}"
 echo "Running sudo apt install build-essential bc"
-sudo apt install build-essential bc | tee -a ${INSTALLDIR}/.install_log
+sudo apt install build-essential bc | installlog
 mkdir $INSTALLDIR/l4t-gcc
 cd $INSTALLDIR/l4t-gcc
 wget -q --show-progress -N http://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz -O gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
 echo "Extracting..."
-tar xf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz | tee -a ${INSTALLDIR}/.install_log
+tar xf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz | installlog
 stop_spinner $?
 
 ### KERNEL SETUP AND PATCH
@@ -287,21 +180,9 @@ mkdir -p $TEGRA_KERNEL_OUT
 echo "Applying patch to fix failure to build."
 echo "See: https://forums.developer.nvidia.com/t/failed-to-make-l4t-kernel-dts/116399/7"
 
-FILETOPATCH=$INSTALLDIR/Linux_for_Tegra/source/public/kernel/kernel-4.9/scripts/Kbuild.include
-echo '--- Kbuild.include	2021-07-27 05:08:17.000000000 +1000
-+++ Kbuild.include.fixed	2021-12-11 19:18:02.082926326 +1100
-@@ -461,8 +461,8 @@
- # It'\''s a common trick to declare makefile variable that contains space
- # we'\''ll need it to convert the path string to list (string delimited by spaces)
- # and vice versa
--the-space :=
--the-space += 
-+E =
-+the-space = $E $E
- # TEGRA_ROOT_PATH is the relative path to the directory one level upper than $srctree
- _TEGRA_ROOT_PATH = $(subst ^$(realpath $(srctree)/..)/,,^$(realpath $(kbuild-dir)))
- # _TEGRA_REL_PATH is path like "../../../" that points to directory one level
-' | patch -b -u $FILETOPATCH
+FILETOPATCH=${INSTALLDIR}/Linux_for_Tegra/source/public/kernel/kernel-4.9/scripts/Kbuild.include
+PATCHFILE=${SCRIPT_DIR}/patches/Kbuild.include.patch
+cat ${PATCHFILE} | patch -b -u ${FILETOPATCH}
 stop_spinner $?
 
 
@@ -311,7 +192,7 @@ case "$REPLY" in
     [yY][eE][sS]|[yY]) 
         ;;
     *)
-        echo "Quit. Kernel compilatino toolchain done"
+        echo "Quit. Kernel build toolchain installed."
         exit 1
         ;;
 esac
@@ -322,12 +203,12 @@ make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} tegra_defconf
 stop_spinner $?
 
 start_spinner "make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j12 dtbs"
-echo "Output being redirected to ${INSTALLDIR}/.install_log"
+echo "Output being redirected to ${LOGFILE}"
 # Build, there are different targets here
 # make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j12 Image
 # make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j12 modules_prepare
 # make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j12 modules
-make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j12 dtbs | tee -a ${INSTALLDIR}/.install_log
+make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j12 dtbs | installlog
 stop_spinner $?
 
 # Copy image to the kernel image install dir for flash.sh
