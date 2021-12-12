@@ -71,7 +71,7 @@ esac
 
 setup_make
 
-prompt "[OPTIONAL] Would you like build the kernel Device Tree Binaries now? ${BOLD}[Y/n]${END} "
+prompt "Would you like build the kernel Device Tree Binaries now? ${BOLD}[Y/n]${END} "
 
 case "$REPLY" in
     "")
@@ -81,13 +81,16 @@ case "$REPLY" in
         compile_dtbs
         ;;
     *)
+	echo "Not compiling."
+	exit 0
         ;;
 esac
 
-prompt "[OPTIONAL] Would you like install the compiled Device Tree Binaries, so they can be flashed? ${BOLD}[y/N]${END} "
+prompt "Would you like install the compiled Device Tree Binaries, so they can be flashed? ${BOLD}[Y/n]${END} "
 
 case "$REPLY" in
     "")
+	install_dtbs
         ;;
     [yY][eE][sS]|[yY]) 
         install_dtbs
