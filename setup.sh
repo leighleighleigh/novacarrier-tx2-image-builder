@@ -7,8 +7,8 @@ INSTALLDIR=${SCRIPT_DIR}/local/
 
 BSPFILEDONE="${INSTALLDIR}/.extracted_bsp"
 ROOTFSFILEDONE="${INSTALLDIR}/.extracted_rootfs"
-LOGFILE=${SCRIPT_DIR}/install.log
-ENVFILE=${SCRIPT_DIR}/install.env
+LOGFILE=${INSTALLDIR}/install.log
+ENVFILE=${INSTALLDIR}/install.env
 
 # Load the external utility scripts
 source ${SCRIPT_DIR}/scripts/textutils.sh
