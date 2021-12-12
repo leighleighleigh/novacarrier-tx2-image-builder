@@ -1,3 +1,6 @@
+#!/bin/bash
+shopt -s expand_aliases
+
 # Sets up the install.env file
 function setup_envfile()
 {

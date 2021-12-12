@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Get location of this script. This is different to the current working directory, which could be anywhere!
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # Load the environment variables
