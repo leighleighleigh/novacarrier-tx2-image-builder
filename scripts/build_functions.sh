@@ -18,7 +18,7 @@ function apply_nova_dts()
         targetDir=$(head -n 1 $txtFriend)
         # Copy the file
         echo "Copying $f to ${TARGETPREFIX}${targetDir}"
-        cp $f $targetDir
+        cp $f ${TARGETPREFIX}${targetDir}
     done
 }
 

@@ -147,9 +147,6 @@ function setup_kernel_sources()
 
     mkdir -p $TEGRA_KERNEL_OUT
 
-    echo "Applying patch to fix failure to build."
-    echo "See: https://forums.developer.nvidia.com/t/failed-to-make-l4t-kernel-dts/116399/7"
-
     FILETOPATCH=${INSTALLDIR}/Linux_for_Tegra/source/public/kernel/kernel-4.9/scripts/Kbuild.include
     PATCHFILE=${SCRIPT_DIR}/patches/Kbuild.include.patch
     patch -b -u ${FILETOPATCH} -i ${PATCHFILE} | installlog
