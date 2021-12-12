@@ -29,13 +29,10 @@ function title () {
     echo
 }
 
-# Reponse is stored into $REPLY
-function boldprompt () {
-    printf "${BOLD}$1${END}"
-    read -r
-}
+
 # Response is in $REPLY. Formatting is cleared.
 function prompt () {
+    printf "${NOVA}PROMPT:${END} "
     printf "$1${END}"
     read -r
 }
@@ -54,7 +51,7 @@ fi
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # Define the install dir
 INSTALLDIR=${SCRIPT_DIR}/local/
-HASAXEL=0
+
 BSPFILEDONE="${INSTALLDIR}/.extracted_bsp"
 ROOTFSFILEDONE="${INSTALLDIR}/.extracted_rootfs"
 
@@ -281,7 +278,6 @@ stop_spinner $?
 start_spinner "Patching kernel source in $(pwd)..."
 cd $INSTALLDIR/Linux_for_Tegra/source/public/kernel/kernel-4.9
 
-export INSTALLDIR=~/novacarrier_linux
 export CROSS_COMPILE=$INSTALLDIR/l4t-gcc/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 export LOCALVERSION=-tegra
 export TEGRA_KERNEL_OUT=${INSTALLDIR}/Linux_for_Tegra/kernel-build
