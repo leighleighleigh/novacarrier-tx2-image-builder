@@ -8,7 +8,39 @@ Resources for setting up a Jetson TX, to run on the [Monash Nova Rover](https://
 - ~30GB+ storage space
 - ~3GB+ of internet download quota
 
-# Key file glossary
+# Getting started
+### To build and compile the image sources
 ```bash
+git clone https://github.com/leighleighleigh/jetson-tx2-novacarrier
+cd jetson-tx2-novacarrier
+sudo ./setup.sh # Follow the prompts 
+sudo ./build.sh # Follow the prompts
+```
+### To flash the image to the Jetson
+```bash
+cd local/Linux_for_Tegra/
 
+# Put jetson into recovery mode
+# 1. Turn on 12V power to the carrier
+# 2. Hold down RCVRY button for 2 seconds
+# 3. While holding RCVRY, Tap the POWER button to start the system
+# 4. Release the RCVRY button after 2 seconds
+
+# Check it exists
+lsusb | grep "recovery"
+
+# Begin flashing
+sudo ./flash.sh jetson-tx2-devkit mmcblk0p1
+```
+
+# Repo directory glossary
+```bash
+├── build.sh # Builds the kernel from source and puts it in the correct folder, so it can be flashed to the jetson
+├── dts # Contains custom device tree and config files specific to the novacarrier - these are used during kernel compilation
+├── jetson_scripts # Some scripts you can use on a Jetson when it's running, EG to setup the CAN interfaces.
+├── local # This is where all the work is done. Archives, Linux_for_Tegra, and other files are put here. This folder is .gitignored.
+├── patches # Contains kernel file patches, which for some reason NVIDIA hasn't implemented yet
+├── README.md # Hello there
+├── scripts # Contains extra bash scripts used by setup.sh and build.sh
+└── setup.sh # The first script you should run.
 ```
