@@ -9,6 +9,8 @@ source ${SCRIPT_DIR}/scripts/textutils.sh
 source ${SCRIPT_DIR}/scripts/spinner.sh
 source ${SCRIPT_DIR}/scripts/cmdutils.sh
 source ${SCRIPT_DIR}/scripts/build_functions.sh
+# Load the setup scripts, which do all the hard work
+source ${SCRIPT_DIR}/scripts/setup_functions.sh
 
 # INSTALL good flag
 INSTALLGOOD=1
@@ -40,13 +42,6 @@ if [[ ${INSTALLGOOD} -eq 0 ]]; then
     exit 1
 fi
 
-# Load the external utility scripts
-source ${SCRIPT_DIR}/scripts/textutils.sh
-source ${SCRIPT_DIR}/scripts/spinner.sh
-source ${SCRIPT_DIR}/scripts/cmdutils.sh
-# Load the setup scripts, which do all the hard work
-source ${SCRIPT_DIR}/scripts/setup_functions.sh
-
 # Check that our source folder exists
 if [ ! -d "${INSTALLDIR}/Linux_for_Tegra/source/public/kernel/kernel-4.9" ] 
 then
@@ -60,6 +55,19 @@ fi
 cd "${INSTALLDIR}/Linux_for_Tegra/source/public/kernel/kernel-4.9"
 
 title "Novacarrier: Kernel DTB Compilation Tool"
+
+prompt "[IMPORTANT] Apply novacarrier-specific kernel changes?\nThese are stored in the /dts/ folder.\nSee build_functions.sh for the copy direction. ${BOLD}[Y/n]${END} "
+
+case "$REPLY" in
+    "")
+        apply_nova_dts
+        ;;
+    [yY][eE][sS]|[yY]) 
+        apply_nova_dts
+        ;;
+    *)
+        ;;
+esac
 
 setup_make
 
