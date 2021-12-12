@@ -7,7 +7,9 @@ TITLE='\033[0;36;1m'
 
 TXTWHITE='\033[97m'
 BGORANGE='\033[48;5;208m'
+BGRED='\033[48;5;9m'
 NOVA=$BGORANGE$TXTWHITE$BOLD
+ERROR=$BGRED$TXTWHITE$BOLD
 
 function title () {
     echo 
@@ -42,14 +44,16 @@ function prompt () {
 title "Jetson Carrier Kernel: Build Environment Setup Tool"
 
 # Check for root
-if [[ "$(whoami)" == root ]]; then
-  echo "Please don't run this as root!"
-  echo "To override this, pass the '-r' flag."
+if [[ "$(whoami)" != root ]]; then
+  printf "${ERROR}Please run this script as root!${END}\n"
+  printf "${ERROR}This is neccesary to use QEMU${END}\n"
   exit 1
 fi
 
+# Get location of this script. This is different to the current working directory, which could be anywhere!
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # Define the install dir
-INSTALLDIR=~/novacarrier_linux
+INSTALLDIR=${SCRIPT_DIR}/local/
 HASAXEL=0
 BSPFILEDONE="${INSTALLDIR}/.extracted_bsp"
 ROOTFSFILEDONE="${INSTALLDIR}/.extracted_rootfs"
