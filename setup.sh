@@ -3,12 +3,12 @@
 # Get location of this script. This is different to the current working directory, which could be anywhere!
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # Setup the environment flags
-INSTALLDIR=${SCRIPT_DIR}/local/
+INSTALLDIR=${SCRIPT_DIR}/local
 
-BSPFILEDONE="${INSTALLDIR}extracted_bsp.done"
-ROOTFSFILEDONE="${INSTALLDIR}extracted_rootfs.done"
-LOGFILE="${INSTALLDIR}install.log"
-ENVFILE="${INSTALLDIR}install.env"
+BSPFILEDONE="${INSTALLDIR}/extracted_bsp.done"
+ROOTFSFILEDONE="${INSTALLDIR}/extracted_rootfs.done"
+LOGFILE="${SCRIPT_DIR}/install.log"
+ENVFILE="${SCRIPT_DIR}/install.env"
 
 # Load the external utility scripts
 source ${SCRIPT_DIR}/scripts/textutils.sh

@@ -56,6 +56,8 @@ then
     exit 1
 fi
 
+# Go to the directory
+cd "${INSTALLDIR}/Linux_for_Tegra/source/public/kernel/kernel-4.9"
 
 title "Novacarrier: Kernel DTB Compilation Tool"
 

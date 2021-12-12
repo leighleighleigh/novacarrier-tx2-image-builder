@@ -2,6 +2,7 @@
 function setup_make()
 {
     start_spinner "make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} tegra_defconfig"
+    cd "${INSTALLDIR}/Linux_for_Tegra/source/public/kernel/kernel-4.9"
     make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} tegra_defconfig
     stop_spinner $?
 }
@@ -9,6 +10,7 @@ function setup_make()
 function compile_dtbs()
 {  
     start_spinner "make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j4 dtbs"
+    cd "${INSTALLDIR}/Linux_for_Tegra/source/public/kernel/kernel-4.9"
     # Build, there are different targets here
     # make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j12 Image
     # make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j12 modules_prepare
@@ -21,7 +23,7 @@ function install_dtbs()
 {
     start_spinner "Installing newly built DTS/DTB files..."
     
-    if [ ! -d "${INSTALLDIR}/Linux_for_Tegra/source/public/kernel/kernel-4.9" ] 
+    if [ ! -d "${INSTALLDIR}/Linux_for_Tegra/kernel/dtb-old" ] 
     then
         echo "Copying ${INSTALLDIR}/Linux_for_Tegra/kernel/dtb to ${INSTALLDIR}/Linux_for_Tegra/kernel/dtb-old"
         cp -r ${INSTALLDIR}/Linux_for_Tegra/kernel/dtb ${INSTALLDIR}/Linux_for_Tegra/kernel/dtb-old
