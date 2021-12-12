@@ -1,5 +1,6 @@
 #!/bin/bash
 shopt -s expand_aliases
+alias installlog="tee -a ${LOGFILE} >/dev/null"
 
 # Sets up the install.env file
 function setup_envfile()
