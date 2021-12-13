@@ -77,24 +77,7 @@
 				};
 			};
 		};
-
-		fragment-500-pcie-config {
-			ids = ">=3310-1000-500", "3310-1001-D02", "3310-0001-D02", "3310-0000-D02";
-			override@0 {
-				target = <&tegra_pcie>;
-				_overlay_ {
-					pci@1,0 {
-						nvidia,num-lanes = <4>;
-					};
-					pci@2,0 {
-						nvidia,num-lanes = <0>;
-					};
-					pci@3,0 {
-						nvidia,num-lanes = <1>;
-					};
-				};
-			};
-		};
+		
 		fragment-comms-a00-chip {
 			ids = "<3310-1000-500";
 			override@0 {
