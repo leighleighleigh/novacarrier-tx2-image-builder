@@ -1,5 +1,5 @@
-# jetson-tx2-novacarrier
-Resources for setting up a Jetson TX, to run on the [Monash Nova Rover](https://www.novarover.space/) NVIDIA Jetson TX2 carrier board, the **Novacarrier**.
+# novacarrier-tx2-image-builder
+Resources for setting up a Jetson TX2, to run on the [Monash Nova Rover](https://www.novarover.space/) NVIDIA Jetson TX2 carrier board, the **Novacarrier**.
 
 ![novacarrier_v1](media/novacarrier_v1.jpg)
 
@@ -12,7 +12,7 @@ Resources for setting up a Jetson TX, to run on the [Monash Nova Rover](https://
 # Getting started
 ### To build and compile the image sources
 ```bash
-git clone https://github.com/leighleighleigh/jetson-tx2-novacarrier
+git clone https://github.com/leighleighleigh/novacarrier-tx2-image-builder
 cd jetson-tx2-novacarrier
 sudo ./setup.sh # Follow the prompts 
 sudo ./build.sh # Follow the prompts
