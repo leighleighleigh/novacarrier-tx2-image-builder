@@ -117,13 +117,26 @@
 #endif
 
 #if TEGRA_XUSB_PADCONTROL_VERSION >= DT_VERSION_2
+	// Original version
+	// xhci@3530000 {
+	// 	status = "okay";
+	// 	phys = <&{/xusb_padctl@3520000/pads/usb2/lanes/usb2-0}>,
+	// 		<&{/xusb_padctl@3520000/pads/usb2/lanes/usb2-1}>,
+	// 		<&{/xusb_padctl@3520000/pads/usb2/lanes/usb2-2}>,
+	// 		<&{/xusb_padctl@3520000/pads/usb3/lanes/usb3-1}>;
+	// 	phy-names = "usb2-0", "usb2-1", "usb2-2", "usb3-1";
+	// };
+	
+	// New version for novacarrier
 	xhci@3530000 {
 		status = "okay";
 		phys = <&{/xusb_padctl@3520000/pads/usb2/lanes/usb2-0}>,
 			<&{/xusb_padctl@3520000/pads/usb2/lanes/usb2-1}>,
 			<&{/xusb_padctl@3520000/pads/usb2/lanes/usb2-2}>,
-			<&{/xusb_padctl@3520000/pads/usb3/lanes/usb3-1}>;
-		phy-names = "usb2-0", "usb2-1", "usb2-2", "usb3-1";
+			<&{/xusb_padctl@3520000/pads/usb3/lanes/usb3-0}>,
+			<&{/xusb_padctl@3520000/pads/usb3/lanes/usb3-1}>,
+			<&{/xusb_padctl@3520000/pads/usb3/lanes/usb3-2}>;
+		phy-names = "usb2-0", "usb2-1", "usb2-2", "usb3-0", "usb3-1", "usb3-2";
 	};
 #else
 	xhci@3530000 {

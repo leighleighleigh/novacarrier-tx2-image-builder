@@ -1,0 +1,1 @@
+source/public/hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-plugin-manager/tegra186-quill-p3310-1000-a00-plugin-manager.dtsi
