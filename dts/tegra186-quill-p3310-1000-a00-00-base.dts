@@ -117,6 +117,7 @@
 #endif
 
 #if TEGRA_XUSB_PADCONTROL_VERSION >= DT_VERSION_2
+	// Original version
 	xhci@3530000 {
 		status = "okay";
 		phys = <&{/xusb_padctl@3520000/pads/usb2/lanes/usb2-0}>,
@@ -208,6 +209,10 @@
 			};
 			usb3-1 {
 				nvidia,usb2-companion = <1>;
+				status = "okay";
+			};
+			usb3-2 {
+				nvidia,usb2-companion = <0>;
 				status = "okay";
 			};
 		};
