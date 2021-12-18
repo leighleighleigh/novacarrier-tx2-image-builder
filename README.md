@@ -1,4 +1,6 @@
 # novacarrier-tx2-image-builder
+WARN: Please see the **r32_5** branch for the release currently in use.
+
 Resources for setting up a Jetson TX2, to run on the [Monash Nova Rover](https://www.novarover.space/) NVIDIA Jetson TX2 carrier board, the **Novacarrier**.
 
 ![novacarrier_v1](media/novacarrier_v1.jpg)
