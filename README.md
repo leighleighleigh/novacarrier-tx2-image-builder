@@ -15,7 +15,7 @@ Resources for setting up a Jetson TX2, to run on the [Monash Nova Rover](https:/
 ### To build and compile the image sources
 ```bash
 git clone https://github.com/leighleighleigh/novacarrier-tx2-image-builder
-cd jetson-tx2-novacarrier
+cd novacarrier-tx2-image-builder
 sudo ./setup.sh # Follow the prompts 
 sudo ./build.sh # Follow the prompts
 ```
