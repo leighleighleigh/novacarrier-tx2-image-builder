@@ -40,6 +40,17 @@ lsusb | grep "recovery"
 # Begin flashing
 sudo ./flash.sh jetson-tx2-devkit mmcblk0p1
 ```
+# Additional Jetson Scripts
+```
+├── jetson_scripts/
+    ├── fan_pwm.sh 
+        # Used to change the fan PWM manually
+    ├── fix_uart0.sh
+        # UART0 is normally used for the ttyS0 linux console, which prints kernel log information. 
+        # To UART0 for other activities (such as GPS), you need to run this script to release it from the kernel command line parameters.
+    ├── setup_can.sh
+        # Enables the can0 and can1 interfaces
+```
 
 # Directory reference
 ```bash
