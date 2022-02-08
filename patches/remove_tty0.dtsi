@@ -1,0 +1,25 @@
+// To added to the #includes of the file:
+// novacarrier-tx2-image-builder/local/Linux_for_Tegra/source/public/hardware/nvidia/platform/t18x/quill/kernel-dts/tegra186-quill-p3310-1000-c03-00-base.dts
+
+/ {
+    // fragment@0 {
+    //     target-path = "/chosen";
+    //     __overlay__ {
+    //         // chosen {
+    //             bootargs = "androidboot.presilicon=true firmware_class.path=/etc/firmware";
+    //         // };
+    //     };
+    // };
+ 
+    // fragment@0 {
+    //     target = <&chosen>;
+    //     __overlay__ {
+    //         bootargs = "okay";
+    //     };
+    // };
+
+    chosen {
+		bootargs ="androidboot.presilicon=true firmware_class.path=/etc/firmware";
+		/delete-property/ stdout-path;
+	};
+};

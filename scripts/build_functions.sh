@@ -22,7 +22,7 @@ function apply_nova_dts()
     done
 }
 
-# Builds the DTBS in the kernel folder
+# Builds the DTBS in the kernel source folder
 function setup_make()
 {
     start_spinner "make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} tegra_defconfig"
