@@ -228,7 +228,7 @@ if [ -z "${USE_UBOOT}" ]; then
 	USE_UBOOT=1;
 fi;
 ROOTFSSIZE=28GiB;
-CMDLINE_ADD="console=ttyS0,115200n8 console=tty0 fbcon=map:0 net.ifnames=0 isolcpus=1-2";
+CMDLINE_ADD="fbcon=map:0 net.ifnames=0 isolcpus=1-2";
 target_board="t186ref";
 ROOT_DEV="mmcblk0p12 ------------ internal eMMC.
         sda1 ----------------- external USB devices. (USB memory stick, HDD)
