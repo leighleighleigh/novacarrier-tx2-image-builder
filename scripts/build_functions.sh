@@ -38,6 +38,7 @@ function compile_dtbs()
     cd ${TEGRA_KERNEL_SRC}
 
     # TEGRA_KERNEL_OUT = Linux_for_Tegra/kernel-build
+    # TEGRA_KERN_MODULE_OUT = Linux_for_Tegra/kernel-modules
     # TEGRA_KERNEL_SRC = Linux_for_Tegra/source/public/kernel/kernel-4.9
 
     # Build, there are different targets here. Only dtbs are needed for the dtb-only patches.
@@ -57,8 +58,6 @@ function compile_dtbs()
     make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j4 dtbs
     stop_spinner $?
     
-    export TEGRA_KERN_MODULE_OUT=${TEGRA_KERNEL_OUT}../kernel-modules
-    mkdir -p ${TEGRA_KERN_MODULE_OUT}
     start_spinner "make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j12 modules_install INSTALL_MOD_PATH=${TEGRA_KERN_MODULE_OUT}"
     make ARCH=arm64 O=$TEGRA_KERNEL_OUT CROSS_COMPILE=${CROSS_COMPILE} -j12 modules_install INSTALL_MOD_PATH=${TEGRA_KERN_MODULE_OUT}
     stop_spinner $?

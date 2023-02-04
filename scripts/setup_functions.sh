@@ -125,7 +125,7 @@ function setup_kernel_sources()
     echo "Output being redirected to ${LOGFILE}"
     echo "Running sudo apt install build-essential bc"
     sudo apt install build-essential bc | installlog
-    mkdir $INSTALLDIR/l4t-gcc
+    mkdir -p $INSTALLDIR/l4t-gcc
     cd $INSTALLDIR/l4t-gcc
 
     # Check if we have already downloaded this file
@@ -153,12 +153,17 @@ function setup_kernel_sources()
     export CROSS_COMPILE=$INSTALLDIR/l4t-gcc/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
     export LOCALVERSION=-tegra
     export TEGRA_KERNEL_OUT=${INSTALLDIR}/Linux_for_Tegra/kernel-build
+    export TEGRA_KERN_MODULE_OUT=${INSTALLDIR}/Linux_for_Tegra/kernel-modules
+
     ### Write these to our env file
     echo "export CROSS_COMPILE=${CROSS_COMPILE}" >> ${ENVFILE}
     echo "export LOCALVERSION=${LOCALVERSION}" >> ${ENVFILE}
     echo "export TEGRA_KERNEL_OUT=${TEGRA_KERNEL_OUT}" >> ${ENVFILE}
+    echo "export TEGRA_KERN_MODULE_OUT=${TEGRA_KERN_MODULE_OUT}" >> ${ENVFILE}
     echo "export TEGRA_KERNEL_SRC=${TEGRA_KERNEL_SRC}" >> ${ENVFILE}
+
     mkdir -p $TEGRA_KERNEL_OUT
+    mkdir -p $TEGRA_KERN_MODULE_OUT
   
     # Kbuild patch, required to build at all
     FILETOPATCH=${INSTALLDIR}/Linux_for_Tegra/source/public/kernel/kernel-4.9/scripts/Kbuild.include
