@@ -127,14 +127,28 @@ function setup_kernel_sources()
     sudo apt install build-essential bc | installlog
     mkdir $INSTALLDIR/l4t-gcc
     cd $INSTALLDIR/l4t-gcc
-    wget -q --show-progress -N http://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz -O gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+
+    # Check if we have already downloaded this file
+    GCCFILEDONE="$INSTALLDIR/l4t-gcc/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz.done"
+
+    # Check if we have already downloaded this file
+    if test -f "$GCCFILEDONE"; then
+        echo "gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz already downloaded."
+    else
+        # Download the compiler
+        wget -q --show-progress -N http://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz -O gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+        # Touch the download file
+        touch $GCCFILEDONE
+    fi
+
     echo "Extracting..."
     tar xf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz | installlog
     stop_spinner $?
 
     ### KERNEL SETUP AND PATCH
     start_spinner "Patching kernel source in $(pwd)..."
-    cd $INSTALLDIR/Linux_for_Tegra/source/public/kernel/kernel-4.9
+    export TEGRA_KERNEL_SRC=$INSTALLDIR/Linux_for_Tegra/source/public/kernel/kernel-4.9
+    cd ${TEGRA_KERNEL_SRC}
 
     export CROSS_COMPILE=$INSTALLDIR/l4t-gcc/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
     export LOCALVERSION=-tegra
@@ -143,13 +157,21 @@ function setup_kernel_sources()
     echo "export CROSS_COMPILE=${CROSS_COMPILE}" >> ${ENVFILE}
     echo "export LOCALVERSION=${LOCALVERSION}" >> ${ENVFILE}
     echo "export TEGRA_KERNEL_OUT=${TEGRA_KERNEL_OUT}" >> ${ENVFILE}
-    
-
+    echo "export TEGRA_KERNEL_SRC=${TEGRA_KERNEL_SRC}" >> ${ENVFILE}
     mkdir -p $TEGRA_KERNEL_OUT
-
+  
+    # Kbuild patch, required to build at all
     FILETOPATCH=${INSTALLDIR}/Linux_for_Tegra/source/public/kernel/kernel-4.9/scripts/Kbuild.include
     PATCHFILE=${SCRIPT_DIR}/patches/Kbuild.include.patch
     patch -b -u ${FILETOPATCH} -i ${PATCHFILE} | installlog
+    
+    # librealsense patches, fixes UVCvideo metadata errors with D435 and T265 cameras
+    PATCHSRC=${SCRIPT_DIR}/patches
+    patch -p1 < ${PATCHSRC}/01-realsense-camera-formats-L4T-4.4.1.patch | installlog
+    patch -p1 < ${PATCHSRC}/02-realsense-metadata-L4T-4.4.1.patch | installlog
+    patch -p1 < ${PATCHSRC}/04-media-uvcvideo-mark-buffer-error-where-overflow.patch | installlog
+    patch -p1 < ${PATCHSRC}/05-realsense-powerlinefrequency-control-fix.patch | installlog
+
     stop_spinner $?
 
     ### Write the relevant environment variables to file,
